@@ -8,11 +8,12 @@ This is the bilingual personal portfolio for Zhao Yingying / Avery Zhao. It is b
 
 - Repository / 代码仓库: https://github.com/ZnonYmitY/portfolio
 - Current branch / 当前分支: https://github.com/ZnonYmitY/portfolio/tree/codex/rebuild-avery-portfolio
-- Expected GitHub Pages URL / 预期 GitHub Pages 地址: https://znonymity.github.io/portfolio/
+- Website / 网站地址: https://znonymity.github.io/portfolio/
+- GitHub Pages workflow / GitHub Pages 发布工作流: `.github/workflows/deploy-pages.yml`
 
-Note: GitHub Pages auto deployment has not been added in this branch. The Pages URL is the expected public address after this branch is merged and the site is manually built/deployed or GitHub Pages is configured.
+GitHub Pages deployment is configured with GitHub Actions in this branch. After the branch is merged into `main`, every push to `main` will build and publish the site to the URL above. The workflow can also be started manually from GitHub Actions with `workflow_dispatch`.
 
-注意：这个分支暂时没有加入 GitHub Pages 自动部署。上面的 Pages 地址是合并并手动构建/部署，或后续配置 GitHub Pages 后的预期访问地址。
+这个分支已经配置了 GitHub Actions 自动发布。合并到 `main` 后，每次推送到 `main` 都会构建并发布到上面的网站地址；也可以在 GitHub Actions 页面手动触发 `workflow_dispatch`。
 
 ## What This Site Contains / 网站内容
 
@@ -87,6 +88,68 @@ npm run typecheck
 npm run lint
 npm run build
 ```
+
+## GitHub Pages Deployment / GitHub Pages 发布
+
+The site is configured for GitHub Pages project hosting at:
+
+```text
+https://znonymity.github.io/portfolio/
+```
+
+Deployment is handled by `.github/workflows/deploy-pages.yml`.
+
+What the workflow does:
+
+1. Runs on every push to `main`.
+2. Can also be started manually from the GitHub Actions page.
+3. Installs dependencies with `npm ci`.
+4. Runs `npm run typecheck`, `npm run lint`, and `npm run build`.
+5. Uploads the generated `dist/` directory to GitHub Pages.
+
+Because this is a Vite project hosted under `/portfolio/`, `vite.config.ts` sets:
+
+```ts
+base: '/portfolio/'
+```
+
+If the website shows GitHub's 404 page, check these first:
+
+1. This branch has been merged into `main`.
+2. Repository Settings → Pages is set to GitHub Actions.
+3. The `Deploy GitHub Pages` workflow has completed successfully.
+4. Visit the project URL again: https://znonymity.github.io/portfolio/
+
+---
+
+网站配置为 GitHub Pages 项目页，线上地址是：
+
+```text
+https://znonymity.github.io/portfolio/
+```
+
+发布由 `.github/workflows/deploy-pages.yml` 负责。
+
+发布流程：
+
+1. 每次推送到 `main` 时自动触发。
+2. 也可以在 GitHub Actions 页面手动触发。
+3. 使用 `npm ci` 安装依赖。
+4. 执行 `npm run typecheck`、`npm run lint` 和 `npm run build`。
+5. 将生成的 `dist/` 目录发布到 GitHub Pages。
+
+因为这个 Vite 项目部署在 `/portfolio/` 路径下，`vite.config.ts` 中已设置：
+
+```ts
+base: '/portfolio/'
+```
+
+如果网站仍然显示 GitHub 的 404 页面，优先检查：
+
+1. 当前分支是否已经合并到 `main`。
+2. 仓库 Settings → Pages 是否设置为 GitHub Actions。
+3. `Deploy GitHub Pages` workflow 是否执行成功。
+4. 再打开项目地址：https://znonymity.github.io/portfolio/
 
 ## Where To Edit Content / 内容在哪里修改
 
@@ -198,20 +261,22 @@ VITE_RESUME_AGENT_ENDPOINT=https://your-internal-endpoint.example.com/ask
 
 模型服务商密钥必须放在服务端。不要把 API Key 放进任何 `VITE_*` 变量，因为 Vite 会把这些变量暴露到浏览器。
 
-## Manual Publishing / 手动发布说明
+## Manual Content Publishing / 手动内容发布
 
-This branch does not include automatic GitHub Pages deployment. A manual publishing flow can be:
+If you edit content locally, the publishing flow is:
 
-1. Merge this branch into the branch used by GitHub Pages.
-2. Run `npm install` if dependencies changed.
-3. Run `npm run build`.
-4. Publish the generated `dist/` directory with your chosen Pages workflow.
-5. Visit https://znonymity.github.io/portfolio/ and verify the visible site.
+1. Change the relevant source files, usually `src/content.ts` and `src/resumeAgent.ts`.
+2. Run `npm run typecheck`, `npm run lint`, and `npm run build`.
+3. Commit and push the changes.
+4. Merge into `main`.
+5. Wait for the `Deploy GitHub Pages` workflow to complete.
+6. Visit https://znonymity.github.io/portfolio/ and verify the visible site.
 
-这个分支没有配置 GitHub Pages 自动部署。手动发布可以按下面流程：
+如果你在本地修改内容，发布流程是：
 
-1. 把这个分支合并到 GitHub Pages 使用的分支。
-2. 如果依赖有变化，运行 `npm install`。
-3. 运行 `npm run build`。
-4. 用你选择的 Pages 流程发布生成的 `dist/` 目录。
-5. 打开 https://znonymity.github.io/portfolio/ 检查线上页面。
+1. 修改对应源码，通常是 `src/content.ts` 和 `src/resumeAgent.ts`。
+2. 运行 `npm run typecheck`、`npm run lint` 和 `npm run build`。
+3. 提交并推送改动。
+4. 合并到 `main`。
+5. 等待 `Deploy GitHub Pages` workflow 执行完成。
+6. 打开 https://znonymity.github.io/portfolio/ 检查线上页面。
