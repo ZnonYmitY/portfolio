@@ -1,43 +1,53 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { LanguageProvider } from './contexts/LanguageContext';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
-import Skills from './components/Skills';
-import Projects from './components/Projects';
 import Experience from './components/Experience';
+import Projects from './components/Projects';
+import Education from './components/Education';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import ResumeAgent from './components/ResumeAgent';
 
 function AppContent() {
   const [scrolled, setScrolled] = useState(false);
+  const [agentOpen, setAgentOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    const openAgent = () => setAgentOpen(true);
+    window.addEventListener('open-resume-agent', openAgent);
+    return () => window.removeEventListener('open-resume-agent', openAgent);
   }, []);
 
   return (
-    <div className="bg-[#050a14] text-gray-100 min-h-screen font-mono overflow-x-hidden">
+    <div className="site-shell">
       <Navbar scrolled={scrolled} />
-      <Hero />
-      <About />
-      <Skills />
-      <Projects />
-      <Experience />
-      <Contact />
+      <main>
+        <Hero />
+        <About />
+        <Experience />
+        <Projects />
+        <Education />
+        <Contact onAsk={() => setAgentOpen(true)} />
+      </main>
       <Footer />
+      <ResumeAgent open={agentOpen} onOpen={() => setAgentOpen(true)} onClose={() => setAgentOpen(false)} />
     </div>
   );
 }
 
-function App() {
+export default function App() {
   return (
     <LanguageProvider>
       <AppContent />
     </LanguageProvider>
   );
 }
-
-export default App;
